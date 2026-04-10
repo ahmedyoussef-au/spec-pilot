@@ -1,0 +1,23 @@
+{
+  "name": "spec-pilot",
+  "description": "Spec Pilot is a GitHub Copilot plugin that accelerates software delivery by providing structured agents, prompt workflows, and productivity skills. It guides engineers through specification, planning, architecture, implementation, and documentation — keeping AI-assisted development consistent, auditable, and aligned with team standards.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Ahmed Youssef"
+  },
+  "repository": "https://github.com/ayoussef-insight/spec-pilot",
+  "license": "MIT",
+  "keywords": [
+    "github-copilot",
+    "spec-pilot",
+    "agents",
+    "prompt-engineering",
+    "software-delivery",
+    "planning",
+    "architecture",
+    "documentation"
+  ],
+  "agents": ["./agents"],
+  "skills": ["./skills"],
+  "commands": ["./commands"]
+}

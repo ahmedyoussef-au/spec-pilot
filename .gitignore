@@ -1,0 +1,111 @@
+# .gitignore for .NET + JavaScript/TypeScript projects
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.orig
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/mcp.json
+
+# Git
+*.mergeBackup
+*.orig
+
+# .NET build output
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Oo]ut/
+Debug/
+Release/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Test results
+TestResult*/
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+
+# Packages
+*.nupkg
+*.snupkg
+artifacts/
+
+# Others (ReSharper, etc.)
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+_ReSharper.Caches/
+
+# Entity Framework / SQL
+*.mdf
+*.ldf
+*.ndf
+*.dbmdl
+
+# Logs
+*.log
+logs/
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# Node / JS
+node_modules/
+
+# Lock files (kept): package-lock.json, yarn.lock, pnpm-lock.yaml
+# If you prefer to ignore lockfiles, uncomment one of the lines below
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# Build artifacts
+build/
+dist/
+.verdaccio/
+.turbo/
+.next/
+out/
+.storybook-out/
+storybook-static/
+
+# Caches
+.cache/
+.parcel-cache/
+.eslintcache
+*.tsbuildinfo
+
+# Coverage
+coverage/
+
+# Env files
+.env
+.env.*
+!.env.example
+
+# Tooling
+.nyc_output/
+.tmp/
+.temp/
+
+# Project-specific: ignore PoC data files
+FieldServiceClaims.Web/App_Data/**
+!FieldServiceClaims.Web/App_Data/.gitkeep

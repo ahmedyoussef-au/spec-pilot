@@ -1,0 +1,21 @@
+{
+  "servers": {
+    "browsermcp": {
+      "command": "npx",
+      "args": ["@browsermcp/mcp@latest"]
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"]
+    },
+    "package-version": {
+      "command": "npx",
+      "args": ["-y", "mcp-package-version"]
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
+      "env": {}
+    }
+  }
+}
