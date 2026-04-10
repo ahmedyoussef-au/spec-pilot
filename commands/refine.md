@@ -1,7 +1,5 @@
 ---
 description: 'Refine Chat Mode reviews specifications or plans, identifies gaps, and iterates with the user to produce a polished version ready for planning or implementation.'
-agent: agent
-tools: ['vscode/vscodeAPI', 'read/readFile', 'edit', 'search', 'web/fetch', 'agent']
 ---
 # Refine Chat Mode
 

@@ -1,7 +1,5 @@
 ---
 description: 'Troubleshoot Chat Mode diagnoses and resolves complex bugs, errors, and unexpected behaviour.'
-agent: agent
-tools: ['vscode', 'execute', 'read', 'edit', 'search', 'web/fetch', 'agent', 'sequential-thinking/*', 'context7/*']
 ---
 
 # Troubleshoot Chat Mode

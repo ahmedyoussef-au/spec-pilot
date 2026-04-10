@@ -16,5 +16,8 @@
     "planning",
     "architecture",
     "documentation"
-  ]
+  ],
+  "agents": ["./agents"],
+  "skills": ["./skills"],
+  "commands": ["./commands"]
 }

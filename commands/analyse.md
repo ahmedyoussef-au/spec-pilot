@@ -1,7 +1,5 @@
 ---
 description: 'Analyse Chat Mode provides structured insights on code, data, or systems.'
-agent: agent
-tools: ['read/readFile', 'edit', 'search', 'web/fetch', 'agent', 'sequential-thinking/*']
 ---
 # Analyse Chat Mode
 
