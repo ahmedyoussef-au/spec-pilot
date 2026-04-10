@@ -1,0 +1,14 @@
+{
+  "name": "spec-pilot-market",
+  "owner": {
+    "name": "Ahmed Youssef"
+  },
+  "plugins": [
+    {
+      "name": "spec-pilot",
+      "source": "./",
+      "description": "Structured agents, prompt workflows, and productivity skills for spec-driven software delivery.",
+      "version": "1.0.0"
+    }
+  ]
+}
