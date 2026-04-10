@@ -45,33 +45,26 @@ Delegate tasks to subagents when they add value:
 - Follow Markdown or comment styles already used in the project.
 - Follow Australian English spelling and grammar.
 
-## Instructions References
+## Plugin Structure
 
-The project contains detailed workflow definitions in the `.github/` folder that provide enhanced instructions:
+This project is distributed as a plugin for both Claude Code and GitHub Copilot CLI. Workflow definitions, agents, and skills live in directories at the repo root:
 
-## Workflow Prompts
+- **`commands/`** — Slash command definitions (`specify`, `refine`, `plan`, `analyse`, `implement`, `code-review`, `troubleshoot`, `save`)
+- **`agents/`** — Agent definitions (`architect`, `scout`, `auditor`, `writer`)
+- **`skills/`** — Productivity skills (`docx`, `pdf`, `xlsx`, `webapp-testing`)
 
-The `.github/prompts/` folder contains workflow definitions (specify, plan, implement, analyse, refine, save). When a workflow is triggered, read the corresponding file and follow it exactly.
-
-### Instruction Files (`.github/instructions/`)
-
-Language-specific guidelines applied based on file patterns:
-
-- **`csharp.instructions.md`**: C# coding conventions, .NET guidelines
-- **`javascript.instructions.md`**: JavaScript/TypeScript conventions
-- **`python.instructions.md`**: Python conventions, tooling, and testing
+When a workflow is triggered, read the corresponding file in `commands/` and follow it exactly.
 
 ## How to Trigger Workflows
 
-You can invoke these workflows by:
+You can invoke workflows by:
 
-1. **Direct request**: "Create specifications for [feature]" → I'll read and follow `specify.prompt.md`
-2. **Workflow name**: "Enter planning mode for [task]" → I'll read and follow `plan.prompt.md`
-3. **Agent reference**: "Act as the Architect agent" → I'll read and follow `architect.agent.md`
-4. **Context reference**: "Following the implementation workflow..." → I'll read and follow `implement.prompt.md`
+1. **Slash command**: `/specify`, `/plan`, `/implement`, etc. — I'll read and follow the matching file in `commands/`
+2. **Direct request**: "Create specifications for [feature]" → I'll read and follow `commands/specify.md`
+3. **Agent reference**: "Act as the Architect agent" → I'll read and follow `agents/architect.agent.md`
 
 When you trigger a workflow:
-1. Read the corresponding `.github/prompts/` file
+1. Read the corresponding file in `commands/` or `agents/`
 2. Follow the instructions exactly as written
 3. Apply the workflow's principles and structure
 4. Deliver outputs in the specified format
