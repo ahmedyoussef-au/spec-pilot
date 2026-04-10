@@ -1,601 +1,236 @@
 # SpecPilot
 
-This guide explains how to use GitHub Copilot with custom instructions to implement **spec-driven development** for AI coding agents.
+A plugin for **Claude Code** and **GitHub Copilot CLI** that brings spec-driven development to AI coding agents. SpecPilot ships a set of slash commands, agents, and skills that guide you through specification, planning, analysis, implementation, review, and documentation — so AI-assisted work stays consistent, auditable, and aligned with your team's standards.
 
 ## Table of Contents
-- [What is Spec-Driven Development?](#what-is-spec-driven-development)
-- [Why Use Spec-Driven Development with AI?](#why-use-spec-driven-development-with-ai)
-- [Configuration Structure](#configuration-structure)
-- [Setting Up Your Project](#setting-up-your-project)
-- [The Workflow](#the-workflow)
-- [Slash Commands (Prompts)](#slash-commands-prompts)
+
+- [What You Get](#what-you-get)
+- [Installation](#installation)
+- [The Spec-Driven Workflow](#the-spec-driven-workflow)
+- [Slash Commands](#slash-commands)
 - [Agents](#agents)
-- [Language-Specific Instructions](#language-specific-instructions)
+- [Skills](#skills)
 - [MCP Servers](#mcp-servers)
-- [Multi-Agent Platform Support](#multi-agent-platform-support)
+- [Working Directories](#working-directories)
 - [Workflow Examples](#workflow-examples)
 - [Best Practices](#best-practices)
+- [Uninstall](#uninstall)
 
 ---
 
-## What is Spec-Driven Development?
+## What You Get
 
-**Spec-driven development** is a methodology where you define clear specifications and plans before writing code. Instead of jumping straight into implementation, you follow a structured process:
+Installing SpecPilot adds to your AI coding session:
 
-1. **Specify** - Define requirements, objectives, and acceptance criteria
-2. **Plan** - Break down the work into actionable steps
-3. **Analyze** - Understand existing code and context (when needed)
-4. **Implement** - Execute the plan systematically
+- **8 slash commands** — `/specify`, `/refine`, `/plan`, `/analyse`, `/implement`, `/code-review`, `/troubleshoot`, `/save`
+- **4 agents** — `Architect` (user-invokable), `Scout`, `Auditor`, `Writer` (subagents)
+- **4 skills** — `docx`, `pdf`, `xlsx`, `webapp-testing` document and testing helpers
+- **MCP server config** for context7, sequential-thinking, and package-version (Claude Code)
 
-This approach is particularly powerful when working with AI coding agents because it:
-- Provides clear context and boundaries for the AI
-- Ensures alignment with project goals before coding begins
-- Creates documentation as a natural byproduct
-- Enables better review and iteration cycles
-
-## Why Use Spec-Driven Development with AI?
-
-AI coding agents like GitHub Copilot work best when given:
-- **Clear objectives** - What needs to be accomplished
-- **Structured context** - Understanding of the existing codebase
-- **Explicit constraints** - Technical limitations and requirements
-- **Step-by-step guidance** - Breaking complex tasks into manageable pieces
-
-Traditional "just code it" approaches with AI often lead to:
-- ❌ Code that doesn't match project patterns
-- ❌ Missing edge cases and error handling
-- ❌ Inconsistent style across the codebase
-- ❌ Solutions that don't align with business requirements
-
-Spec-driven development addresses these issues by:
-- ✅ Separating "what" from "how"
-- ✅ Creating reviewable artefacts at each stage
-- ✅ Maintaining consistency through defined guidelines
-- ✅ Enabling iterative refinement without code waste
+The whole plugin is defined in [.claude-plugin/plugin.json](.claude-plugin/plugin.json) (Claude Code) and [plugin.json](plugin.json) (GitHub Copilot CLI), and ships agents, commands, and skills as directory trees that both ecosystems auto-discover.
 
 ---
 
-## Configuration Structure
+## Installation
 
-The configuration uses a centralised structure in the `.github/` directory:
+SpecPilot can be installed into Claude Code or GitHub Copilot, from either the terminal or directly inside VS Code. Pick whichever path matches your setup.
 
-```
-.github/
-├── copilot-instructions.md       # Main Copilot behaviour configuration
-├── agents/                        # Agent definitions (Copilot Chat agents)
-│   ├── architect.agent.md        # Lead Architect (user-invokable)
-│   ├── auditor.agent.md          # Logic Auditor (subagent)
-│   ├── scout.agent.md            # Context Scout (subagent)
-│   └── writer.agent.md           # Technical Writer (subagent)
-├── instructions/                  # Language and project guidelines
-│   ├── csharp.instructions.md    # C# coding standards
-│   ├── javascript.instructions.md # JavaScript/TypeScript standards
-│   └── ...                        # Add your own custom instructions
-└── prompts/                       # Slash command definitions
-    ├── specify.prompt.md          # /specify - Create specifications
-    ├── refine.prompt.md           # /refine - Refine specs or plans via targeted questions
-    ├── plan.prompt.md             # /plan - Create implementation plans
-    ├── analyse.prompt.md          # /analyse - Analyse code/systems
-    ├── implement.prompt.md        # /implement - Execute plans
-    └── save.prompt.md             # /save - Save conversation context
-```
+### Claude Code (CLI and VS Code extension)
 
-### Configuration Files
-
-#### `copilot-instructions.md`
-The main configuration file that defines:
-- General Copilot behaviour (concise, factual, consistent)
-- Documentation standards (professional, clear, with examples)
-- How slash commands work
-- References to prompt and instruction files
-
-#### `.github/instructions/` folder
-
-Contains language-specific and project-specific coding guidelines:
-- Language coding conventions (C#, JavaScript/TypeScript, etc.)
-- Framework and version recommendations
-- Testing best practices
-- Common patterns and anti-patterns
-- Team-specific coding standards
-- Project-specific guidelines
-
-All custom instructions for your project should be added as new files in this folder, using YAML frontmatter with `applyTo` glob patterns to specify when they should be applied.
-
-#### `.github/agents/` folder
-
-Contains agent definitions for Copilot Chat's agent mode:
-- Each agent has a dedicated role, tools, and behavioural instructions
-- Agents can delegate to other agents (subagents)
-- User-invokable agents can be triggered directly via `@AgentName`
-- See [Agents](#agents) for details
-
-#### `.github/prompts/` folder
-
-Contains slash command definitions that enable different modes:
-- Each prompt defines tools, behaviour, and output structure
-- Prompts can specify AI model preferences
-- Workflows are clearly defined with steps
-
-### Working Directories
-
-The workflow creates structured directories for organising work:
-
-```
-.tasks/
-└── {task_name}/                   # Individual task workspace
-    ├── specifications.md          # Requirements and acceptance criteria
-    ├── plan.md                    # Implementation plan with steps
-    └── documentation.md           # Task-related documentation (optional)
-
-.context/
-└── {context_name}.md              # Analysis reports and context documents
-```
-
-**`.tasks/`** - Contains active and completed tasks
-- Each task gets its own folder
-- Keeps specifications and plans together
-- Easy to reference and update
-
-**`.context/`** - Stores analysis and reference documentation
-- Code analysis reports
-- Architecture overviews
-- System understanding documents
-
----
-
-## Setting Up Your Project
-
-To implement this spec-driven workflow in your project:
-
-### 1. Add Project-Specific Custom Instructions
-
-Create your own instruction files in `.github/instructions/`:
-
-**Example: Team Conventions**
-
-`.github/instructions/team-conventions.instructions.md`:
-```markdown
----
-description: Team-wide coding standards
-applyTo: '**/*'
----
-
-## Code Review Requirements
-- All functions must have unit tests
-- No TODO comments in production code
-- Security review required for authentication changes
-
-## Commit Message Format
-- feat: New feature
-- fix: Bug fix
-- docs: Documentation
-- refactor: Code restructuring
-```
-
-**Example: API Guidelines**
-
-`.github/instructions/api-guidelines.instructions.md`:
-```markdown
----
-description: REST API design standards
-applyTo: '**/api/**/*.*, **/controllers/**/*.*'
----
-
-## API Standards
-- Use RESTful conventions
-- Version all endpoints (e.g., /api/v1/)
-- Return consistent error format
-- Use HTTP status codes correctly
-
-## Response Format
-- Success: { data: {...}, meta: {...} }
-- Error: { error: { code, message, details } }
-```
-
-**Example: Database Patterns**
-
-`.github/instructions/database-patterns.instructions.md`:
-```markdown
----
-description: Database access patterns
-applyTo: '**/repositories/**/*.*, **/data/**/*.*'
----
-
-## Database Guidelines
-- Use repository pattern for data access
-- Always use parameterised queries
-- Handle connection disposal properly
-- Implement retry logic for transient failures
-
-## Transaction Guidelines
-- Keep transactions short
-- Handle deadlocks gracefully
-- Use appropriate isolation levels
-```
-
-### 2. Create Working Directories
+The Claude Code CLI and the VS Code extension share the same plugin state, so a single install command covers both.
 
 ```bash
-mkdir -p .tasks .context
-echo "# Tasks\nActive development tasks" > .tasks/README.md
-echo "# Context\nAnalysis and reference docs" > .context/README.md
+claude plugin marketplace add ahmedyoussef-au/spec-pilot
+claude plugin install spec-pilot@spec-pilot-market
 ```
+
+Verify:
+
+```bash
+claude plugin list
+```
+
+You should see `spec-pilot@spec-pilot-market` listed as enabled. Start a fresh `claude` session (or reload the VS Code extension) and type `/help` to confirm the SpecPilot commands appear.
+
+### GitHub Copilot CLI
+
+Requires [GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/set-up/install-copilot-cli) installed and authenticated.
+
+```bash
+copilot plugin install ahmedyoussef-au/spec-pilot
+```
+
+Or load it from a local checkout for development:
+
+```bash
+copilot --plugin-dir /path/to/spec-pilot
+```
+
+Verify:
+
+```bash
+copilot plugin list
+```
+
+### GitHub Copilot Chat in VS Code
+
+VS Code's [Agent Plugins (Preview)](https://code.visualstudio.com/docs/copilot/customization/agent-plugins) feature loads the same `plugin.json` format, so you can install SpecPilot directly into Copilot Chat without leaving the editor.
+
+Choose one of the three install paths:
+
+1. **Command Palette** — press `Cmd+Shift+P` (macOS) or `Ctrl+Shift+P` (Windows/Linux), run **Chat: Install Plugin From Source**, and paste:
+   ```
+   https://github.com/ahmedyoussef-au/spec-pilot
+   ```
+2. **Extensions sidebar** — open Extensions (`Cmd+Shift+X` / `Ctrl+Shift+X`), type `@agentPlugins` in the search box, and install from there.
+3. **Chat Customizations editor** — open the Plugins page and click the **+** button to add a plugin from a Git URL.
+
+After installation, SpecPilot's slash commands and agents become available in the Copilot Chat panel. Manage installed plugins from the **Agent Plugins — Installed** section of the Extensions view.
 
 ---
 
-## The Workflow
+## The Spec-Driven Workflow
 
-The spec-driven development workflow follows four distinct phases:
+SpecPilot structures AI-assisted work into distinct phases, each triggered by a slash command:
 
 ```
-1. SPECIFY    → Define what needs to be built (requirements, objectives, acceptance criteria)
-2. PLAN       → Break down how to build it (tasks, steps, dependencies)
-3. ANALYSE    → Understand existing codebase (optional, for context gathering)
-4. IMPLEMENT  → Build according to the plan (following all guidelines)
+1. SPECIFY    → Define what needs to be built (requirements, acceptance criteria)
+2. REFINE     → Surface ambiguities and fill gaps before planning
+3. PLAN       → Break down how to build it (tasks, dependencies)
+4. ANALYSE    → Understand existing code or systems (optional)
+5. IMPLEMENT  → Build according to the plan
+6. REVIEW     → Audit code changes for quality and correctness
+7. TROUBLESHOOT → Diagnose and resolve issues
+8. SAVE       → Preserve conversation context for later
 ```
 
-Each phase is triggered by a slash command and produces structured output.
-
-### Phase 1: Specification (`/specify`)
-**Purpose**: Create clear, actionable requirements
-
-**Process**:
-1. Copilot asks clarifying questions (3-5 multiple choice if needed)
-2. Gathers project context from existing documentation
-3. Creates structured specifications
-4. Saves to `.tasks/{task_name}/specifications.md`
-
-**Output Structure**:
-- **Objectives**: What needs to be achieved
-- **Requirements**: Functional and non-functional requirements
-- **Constraints**: Technical limitations or boundaries
-- **Acceptance Criteria**: How to verify completion
-
-**Key Rules**:
-- Short and concise
-- No implementation details (unless requested)
-- No code snippets in specs
-- Focus on "what", not "how"
+Each phase produces a reviewable artefact written to a structured location, so your decisions, plans, and analyses become part of the project history rather than ephemeral chat.
 
 ---
 
-### Phase 2: Planning (`/plan`)
-**Purpose**: Create a step-by-step implementation roadmap
+## Slash Commands
 
-**Process**:
-1. Reads specifications from `.tasks/{task_name}/specifications.md`
-2. Confirms correct spec file with user
-3. Breaks down objectives into manageable tasks
-4. Creates timeline and identifies resources
-5. Saves to `.tasks/{task_name}/plan.md`
+All commands live in [commands/](commands/) and can be customised by editing the corresponding `.md` file.
 
-**Output Structure**:
-- **Objectives**: Summary from specs
-- **Tasks**: Broken down milestones
-- **Timelines**: Estimated completion times
-- **Resources**: Tools, files, and dependencies needed
+### `/specify` — Create Specifications
 
-**Key Rules**:
-- Never implements code during planning
-- Tasks should be small and manageable
-- Clear dependencies between tasks
-- Actionable steps only
+Define requirements, objectives, and acceptance criteria before any code is written. Asks clarifying questions when the brief is ambiguous and writes output to `.tasks/{task_name}/specifications.md`.
 
----
-
-### Phase 3: Analysis (`/analyse`) [Optional]
-**Purpose**: Deep dive into existing code, data, or systems
-
-**Process**:
-1. Gathers context about code/system to analyse
-2. Reads existing documentation if available
-3. Performs structured analysis
-4. Creates detailed report
-5. Saves to `.context/{context_name}.md`
-
-**Output Structure**:
-- **Business Understanding**: Purpose and goals
-- **Technology**: Languages, frameworks, libraries used
-- **Technical Analysis**: Strengths, weaknesses, patterns
-
-**Use Cases**:
-- Understanding legacy code before refactoring
-- Evaluating architectural decisions
-- Identifying improvement opportunities
-- Creating context for new team members
-
----
-
-### Phase 4: Implementation (`/implement`)
-**Purpose**: Execute the plan and build the solution
-
-**Process**:
-1. Reads plan from `.tasks/{task_name}/plan.md` or specs
-2. Confirms correct file with user
-3. Follows tasks and milestones sequentially
-4. Adheres to project coding standards
-5. Uses appropriate tools and methods
-
-**Key Rules**:
-- Follow the plan strictly
-- Maintain consistency with existing codebase
-- Use project-specific coding patterns
-- Apply language-specific instructions automatically
-
-## Slash Commands (Prompts)
-
-Each slash command corresponds to a prompt file in `.github/prompts/`. These commands trigger specific AI modes optimised for different tasks. The `/refine` command helps improve ambiguous specifications or plans before planning or implementation proceeds.
-
-### `/specify` – Create Specifications
-
-**When to use**: Starting any new feature, bug fix, enhancement, or refactoring
-
-**Example usage**:
 ```
-/specify Add authentication to the API
+/specify Add user authentication with OAuth2
 /specify Fix memory leak in data processor
-/specify Refactor database connection pooling
 ```
 
-**What happens**:
-1. Copilot asks clarifying questions (when requirements are unclear)
-2. Gathers context from your project
-3. Creates `.tasks/{task_name}/specifications.md`
+### `/refine` — Refine a Spec or Plan
 
-**Customisation**: Edit `.github/prompts/specify.prompt.md` to:
-- Change output format
-- Add/remove specification sections
-- Modify clarification questions
-- Adjust tools available
+Surfaces ambiguities, hidden assumptions, and missing details in an existing `specifications.md` or `plan.md`, then asks targeted clarification questions. Reduces churn before planning or implementation begins.
 
----
-
-### `/refine` – Refine Specifications or Plans
-
-**When to use**: After a draft specification or plan exists and there are uncertainties, gaps, or implicit assumptions that need surfacing before moving forward.
-
-**Example usage**:
 ```
 /refine oauth-authentication
-/refine fix-memory-leak
 ```
 
-**What happens**:
-1. Confirms the task name
-2. Loads the relevant `specifications.md` or `plan.md`
-3. Identifies ambiguities, missing details, and potential challenges
-4. Asks 3–5 targeted multiple‑choice clarification questions (only if needed)
-5. Updates or recommends updates to the specification or plan (without implementing code)
+### `/plan` — Create an Implementation Plan
 
-**Customisation**: Edit `.github/prompts/refine.prompt.md` to adjust refinement strategy, number/style of questions, or tool access.
+Reads the specification for a task and produces a step-by-step roadmap at `.tasks/{task_name}/plan.md`. Never writes code — planning only.
 
-**Why it helps**: Reduces churn by ensuring planning and implementation are based on well‑understood, explicit requirements; mitigates hidden assumptions early.
-
-### `/plan` – Create Implementation Plan
-
-**When to use**: After specifications are defined and approved
-
-**Example usage**:
 ```
-/plan api-authentication
-/plan fix-memory-leak
+/plan oauth-authentication
 ```
 
-**What happens**:
-1. Confirms the task name
-2. Loads specifications from `.tasks/{task_name}/specifications.md`
-3. Breaks work into actionable steps
-4. Creates `.tasks/{task_name}/plan.md`
+### `/analyse` — Analyse Code or Systems
 
-**Customisation**: Edit `.github/prompts/plan.prompt.md` to:
-- Modify plan structure
-- Add estimation requirements
-- Include risk assessment
-- Change timeline format
+Deep-dives into existing code, data, or architecture and writes a structured report to `.context/{context_name}.md`. Use this before refactors or when onboarding to unfamiliar code.
 
----
-
-### `/analyse` – Analyse Code or Systems
-
-**When to use**: Understanding existing code, evaluating architecture, planning refactors
-
-**Example usage**:
 ```
-/analyse Authentication middleware implementation
-/analyse Database query performance patterns
+/analyse Payment processing module
 ```
 
-**What happens**:
-1. Defines context name (e.g., "authentication-analysis")
-2. Gathers information from your workspace
-3. Reads existing documentation
-4. Creates `.context/{context_name}.md`
+### `/implement` — Execute the Plan
 
-**Customisation**: Edit `.github/prompts/analyse.prompt.md` to:
-- Change report sections
-- Add custom analysis criteria
-- Modify output format
-- Include specific metrics
+Reads the plan for a task and executes it step by step, following project coding standards and existing patterns.
 
----
-
-### `/implement` – Execute the Plan
-
-**When to use**: After plan is reviewed and approved, ready to code
-
-**Example usage**:
 ```
-/implement api-authentication
+/implement oauth-authentication
 ```
 
-**What happens**:
-1. Loads plan from `.tasks/{task_name}/plan.md`
-2. Confirms it's the correct plan
-3. Executes tasks sequentially
-4. Applies all coding standards automatically
-5. Follows project patterns
+### `/code-review` — Review Changes
 
-**Customisation**: Edit `.github/prompts/implement.prompt.md` to:
-- Add pre-implementation checks
-- Include testing requirements
-- Modify completion criteria
-- Add documentation steps
+Audits code changes for correctness, edge cases, security concerns, and adherence to project conventions. Produces a structured review with actionable feedback.
 
----
+### `/troubleshoot` — Diagnose Issues
 
-### `/save` – Save Conversation Context
+Walks through a structured diagnosis of a bug or failure: reproducing the issue, isolating the cause, and proposing fixes.
 
-**When to use**: After a productive conversation where you want to preserve key findings, decisions, or insights for future reference
+### `/save` — Save Conversation Context
 
-**Example usage**:
+Summarises the current conversation — key decisions, findings, open questions — and writes it to `.context/{context_name}.md` so it can be picked up later.
+
 ```
 /save authentication-decisions
-/save debugging-session-findings
 ```
-
-**What happens**:
-1. Reviews the conversation history
-2. Confirms context name with the user
-3. Summarises key information, insights, and findings
-4. Saves a structured Markdown summary to `.context/{context_name}.md`
-
-**Customisation**: Edit `.github/prompts/save.prompt.md` to:
-- Change summary format
-- Add custom sections
-- Modify extraction criteria
 
 ---
 
 ## Agents
 
-The framework includes a multi-agent system in `.github/agents/` that enables specialised AI roles to collaborate on complex tasks. Agents differ from slash commands: while slash commands trigger specific workflows, agents are autonomous roles that can delegate to one another.
+SpecPilot ships four agents in [agents/](agents/). One is user-invokable; the rest are subagents that get called indirectly.
 
-### How Agents Work
+### `Architect` (user-invokable)
 
-- **User-invokable agents** can be triggered directly in Copilot Chat (e.g. `@Architect`)
-- **Subagents** are called by other agents and cannot be invoked directly
-- Each agent definition specifies its role, tools, model, and behavioural instructions
+Orchestrates a full feature lifecycle — research, design, audit, documentation. Delegates to the other three agents.
 
-### Available Agents
+**Workflow:**
+1. Confirms scope and which folders to search
+2. Delegates to `Scout` for codebase research
+3. Produces a technical design based on findings
+4. Delegates to `Auditor` for review
+5. Delegates to `Writer` for documentation
+6. Presents the complete package for approval
 
-#### `@Architect` – Lead Architect (user-invokable)
+### `Scout` (subagent)
 
-Orchestrates the full lifecycle of a feature request — from research through to documented design.
+Traces code flows, maps dependencies, and returns evidence-backed findings with code snippets. Respects scoping constraints.
 
-**Workflow**:
-1. **Confirm scope** — asks whether to scout the repo and which folders to search
-2. **Research** — delegates to `Scout` to find relevant code and dependencies
-3. **Design** — creates a technical solution based on findings
-4. **Audit** — delegates to `Auditor` to review the design
-5. **Document** — delegates to `Writer` to produce documentation
-6. **Finalise** — presents the complete package for approval
+### `Auditor` (subagent)
 
-#### `Scout` – Context Scout (subagent)
+Reviews designs, plans, or code proposals for correctness, edge cases, security, and best practices. Returns a structured verdict.
 
-Traces code flows, identifies dependencies, and maps relevant files for a given feature or change. Respects scoping constraints (`includePaths` / `excludeGlobs`) and provides evidence-backed findings with code snippets.
+### `Writer` (subagent)
 
-#### `Auditor` – Logic Auditor (subagent)
+Translates technical designs into clear documentation — README updates, API specs, tutorials, inline docs. Follows the project's existing conventions and Australian English spelling.
 
-Reviews designs, plans, and code proposals for:
-- Correctness and assumption verification
-- Edge cases (empty inputs, large datasets, concurrency)
-- Error handling and security concerns
-- Adherence to best practices and existing patterns
-
-Provides a structured verdict with actionable feedback.
-
-#### `Writer` – Technical Writer (subagent)
-
-Translates technical designs into clear documentation: README updates, API specs, tutorials, and inline documentation. Follows the project's existing documentation conventions and Australian English spelling.
-
-### Customising Agents
-
-Edit the agent files in `.github/agents/` to:
-- Change agent roles or instructions
-- Add new specialist agents
-- Modify delegation chains
-- Adjust model preferences
-
-> **Note**: Agents require VS Code settings `chat.customAgentInSubagent.enabled` and `chat.useAgentSkills` to be enabled. These are pre-configured in `.vscode/settings.json`.
+Edit the files in [agents/](agents/) to change roles, tools, or model preferences.
 
 ---
 
-## Language-Specific Instructions
+## Skills
 
-The framework includes language-specific and project-specific guidelines in `.github/instructions/`.
+SpecPilot bundles four productivity skills in [skills/](skills/) for document handling and web testing:
 
-### How It Works
+| Skill | Purpose |
+|---|---|
+| [docx](skills/docx/) | Create, read, and edit Word documents |
+| [pdf](skills/pdf/) | Work with PDFs including form filling |
+| [xlsx](skills/xlsx/) | Create, read, and edit Excel spreadsheets |
+| [webapp-testing](skills/webapp-testing/) | Browser-based testing for web applications |
 
-Instructions in `.github/instructions/`:
-- Cover language-specific coding standards and best practices
-- Include project-specific customisations and team conventions
-- Applied automatically based on file patterns defined in `applyTo`
-- Can be extended by adding new instruction files
-
-All instruction files use YAML frontmatter with `applyTo` glob patterns:
-
-```yaml
----
-description: Instruction description
-applyTo: '**/*.ext, **/*.other'
----
-```
-
-When you edit a file, Copilot applies all matching instructions based on the file patterns defined in each instruction file.
-
-### Available Language Instructions
-
-The framework includes instructions for common languages:
-
-**`.github/instructions/csharp.instructions.md`** - C# standards (applies to `**/*.cs, **/*.csproj, **/*.sln, **/*.razor, **/*.cshtml`)
-**`.github/instructions/javascript.instructions.md`** - JavaScript/TypeScript standards (applies to `**/*.ts, **/*.js, **/*.tsx, **/*.jsx, **/*.cshtml`)
-**`.github/instructions/python.instructions.md`** - Python standards (applies to `**/*.py, **/*.pyi, **/pyproject.toml`)
+Each skill has its own `SKILL.md` describing usage.
 
 ---
 
 ## MCP Servers
 
-The framework includes pre-configured [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) servers that extend AI capabilities. These are defined in `.vscode/mcp.json` (for VS Code / Copilot) and `.claude/mcp.json` (for Claude Code).
-
-### Included Servers
+Claude Code receives pre-configured [MCP](https://modelcontextprotocol.io/) server definitions via [.claude/mcp.json](.claude/mcp.json):
 
 | Server | Purpose |
 |---|---|
-| **sequential-thinking** | Provides dynamic, iterative problem-solving for complex architectural and design decisions |
 | **context7** | Retrieves up-to-date library documentation and code examples |
-| **package-version** | Checks package versions across npm, PyPI, Docker Hub, and GitHub Actions |
-| **browsermcp** | Browser automation for testing and interacting with web applications (VS Code only) |
+| **sequential-thinking** | Iterative problem-solving for complex architectural decisions |
+| **package-version** | Checks package versions across npm, PyPI, Docker Hub, GitHub Actions |
 
-### Setup
+MCP servers launch via `npx`, so **Node.js** must be installed on the host.
 
-Some MCP servers require API keys. Copy `.env.example` to `.env` and fill in the required values:
-
-```bash
-cp .env.example .env
-```
-
-MCP servers require **Node.js** and `npx` to be installed, as they are launched via `npx` commands.
-
-### Customisation
-
-Add or remove MCP servers by editing:
-- `.vscode/mcp.json` — for VS Code / GitHub Copilot
-- `.claude/mcp.json` — for Claude Code
-
----
-
-## Multi-Agent Platform Support
-
-While the core workflow is designed for **GitHub Copilot** in VS Code, the framework includes compatibility files for other AI coding platforms:
-
-| File | Platform | Purpose |
-|---|---|---|
-| `.github/copilot-instructions.md` | GitHub Copilot | Main behaviour configuration |
-| `AGENTS.md` | Claude Code / OpenAI Codex | Project instructions and guidelines |
-| `CLAUDE.md` | Claude Code | References `AGENTS.md` for shared configuration |
-| `.claude/mcp.json` | Claude Code | MCP server configuration |
-
-These files share the same core guidelines (Australian English, spec-driven workflow, implementation principles) to ensure consistent AI behaviour regardless of platform. If you only use Copilot, the root-level `AGENTS.md` and `CLAUDE.md` files can be safely removed.
+Some servers may require API keys. Copy [.env.example](.env.example) to `.env` and populate any required values.
 
 ---
 
@@ -604,223 +239,97 @@ These files share the same core guidelines (Australian English, spec-driven work
 ### Example 1: Adding a New Feature
 
 ```
-# Step 1: Create specifications
+# 1. Create the spec
 User: /specify Add user authentication with OAuth2
 
-Copilot: I'll help you create specifications. Let me ask a few questions:
-1. Which OAuth providers? [Google / GitHub / Microsoft / Custom]
-2. What needs protection? [Entire app / Specific routes / API only]
-3. Session management? [JWT / Server-side / Hybrid]
+SpecPilot: Asks clarifying questions (providers, scope, session strategy),
+           then writes .tasks/oauth-authentication/specifications.md
 
-User: [Answers: Google and GitHub, Specific routes, JWT]
+# 2. Refine if needed
+User: /refine oauth-authentication
 
-Copilot: Creates .tasks/oauth-authentication/specifications.md
+SpecPilot: Surfaces hidden assumptions, asks targeted questions, updates the spec
 
-# Step 2: Create implementation plan
+# 3. Plan the work
 User: /plan oauth-authentication
 
-Copilot: Confirms task and creates .tasks/oauth-authentication/plan.md with:
-- OAuth library selection
-- Route protection strategy
-- Token management approach
-- Testing plan
+SpecPilot: Writes .tasks/oauth-authentication/plan.md
 
-# Step 3: Review and approve plan
-User: [Reviews plan, suggests adding rate limiting]
-
-Copilot: Updates plan with rate limiting requirements
-
-# Step 4: Implement the feature
+# 4. Execute
 User: /implement oauth-authentication
 
-Copilot: Executes plan step by step:
-- Installs OAuth libraries
-- Creates authentication middleware
-- Implements token validation
-- Adds protected routes
-- Writes tests
-- Adds rate limiting
+SpecPilot: Works through the plan step by step
 ```
 
 ### Example 2: Understanding Existing Code
 
 ```
-# Analyse an unfamiliar module
 User: /analyse Payment processing module
 
-Copilot: Creates .context/payment-processing.md with:
-- Business understanding (subscription billing, refunds)
-- Technology stack (Stripe API, webhooks, queues)
-- Technical analysis (strengths: good error handling; 
-  weaknesses: no retry logic)
-- Recommendations (add idempotency, improve logging)
+SpecPilot: Writes .context/payment-processing.md with:
+  - Business purpose (subscription billing, refunds)
+  - Technology stack (Stripe API, webhooks, queues)
+  - Strengths, weaknesses, recommendations
 ```
 
-### Example 3: Bug Fix with Specs
+### Example 3: Reviewing Changes
 
 ```
-# Step 1: Specify the fix
-User: /specify Fix race condition in concurrent user updates
+User: /code-review
 
-Copilot: Creates .tasks/fix-race-condition/specifications.md
-- Issue: Multiple simultaneous updates cause data loss
-- Expected: Last write wins or optimistic locking
-- Constraints: No database migration, backward compatible
-
-# Step 2: Plan the fix
-User: /plan fix-race-condition
-
-Copilot: Creates implementation plan:
-- Add version field to user model
-- Implement optimistic locking
-- Handle version conflicts
-- Add tests for concurrent updates
-
-# Step 3: Implement
-User: /implement fix-race-condition
-
-Copilot: Applies the fix following all guidelines
+SpecPilot: Audits current changes for correctness, edge cases, security,
+           and adherence to project patterns; returns actionable feedback
 ```
 
 ---
 
 ## Best Practices
 
-### For Specifications
-- ✅ Be specific about requirements and constraints
-- ✅ Define clear, testable acceptance criteria
-- ✅ Include business context and user value
-- ✅ Document technical limitations upfront
-- ❌ Don't include implementation details (focus on "what", not "how")
-- ❌ Don't write code or architectural designs in specs
+### Specifications
+- Be specific about requirements and constraints
+- Define testable acceptance criteria
+- Focus on **what**, not **how** — no code or implementation details
 
-### For Planning
-- ✅ Break down into small, independently testable tasks
-- ✅ Identify and document dependencies between tasks
-- ✅ Estimate complexity and potential risks realistically
-- ✅ Include rollback strategies for risky changes
-- ❌ Don't implement code during the planning phase
-- ❌ Don't skip specification review before planning
+### Planning
+- Break work into small, independently testable tasks
+- Document dependencies between tasks
+- Don't write code during the planning phase
 
-### For Analysis
-- ✅ Use when approaching unfamiliar codebases
-- ✅ Document findings for team knowledge sharing
-- ✅ Identify both patterns to follow and anti-patterns to avoid
-- ✅ Create context documents before major refactoring
-- ✅ Include concrete examples in your analysis
+### Analysis
+- Use `/analyse` before refactors and when joining unfamiliar codebases
+- Document both patterns to follow and anti-patterns to avoid
 
-### For Implementation
-- ✅ Follow the approved plan strictly
-- ✅ Test each step before proceeding to the next
-- ✅ Maintain consistency with existing coding standards
-- ✅ Document changes and rationale as you go
-- ✅ Commit frequently with descriptive messages
-- ❌ Don't deviate from the approved plan without updating it first
-- ❌ Don't skip tests "for now" - write them during implementation
+### Implementation
+- Follow the approved plan; update it before deviating
+- Commit frequently with descriptive messages
+- Write tests as you go, not "later"
 
-### General Workflow Tips
-
-1. **Always start with `/specify`** for any new work, even small changes
-2. **Review and iterate on plans** before coding - catching issues early saves time
-3. **Use `/analyse` proactively** when joining projects or before refactoring
-4. **Keep tasks small and focused** - easier to review, test, and merge
-5. **Commit after completing each task** in the plan - easier to rollback
-6. **Update documentation** as you work - specifications and plans are living documents
-7. **Version your task files** - commit `.tasks/` contents to track decision history
-8. **Reuse analysis** - reference `.context/` files in new specifications
-9. **Customise prompts** for your team's workflow and terminology
-10. **Iterate on instructions** - improve language-specific guidelines based on experience
+### General
+- Start every change with `/specify`, even small ones
+- Review plans before implementing — catching issues early saves time
+- Commit `.tasks/` and `.context/` contents to preserve decision history
 
 ---
 
-## Advanced Customisation
+## Uninstall
 
-### Creating Custom Slash Commands
+### Claude Code
 
-You can add your own slash commands for project-specific workflows by creating new prompt files:
-
-1. **Create a new prompt file**: `.github/prompts/review.prompt.md`
-
-```markdown
----
-description: Review code for security and performance issues
-tools: ['edit', 'search', 'problems', 'vscodeAPI']
----
-
-# Code Review Mode
-
-Perform thorough code review focusing on:
-- Security vulnerabilities
-- Performance bottlenecks
-- Code quality and maintainability
-- Test coverage
-
-## Process
-1. Analyze the specified files or changes
-2. Identify issues by category
-3. Suggest specific improvements
-4. Create report in `.context/review-{timestamp}.md`
+```bash
+claude plugin uninstall spec-pilot@spec-pilot-market
+claude plugin marketplace remove spec-pilot-market
 ```
 
-2. **Use it**: `/review src/authentication/`
+### GitHub Copilot CLI
 
-### Chaining Commands
-
-You can create workflows that chain multiple commands:
-
-```
-1. /analyse existing-auth → understand current implementation
-2. /specify add-oauth → define OAuth requirements
-3. /plan add-oauth → create implementation plan
-4. /implement add-oauth → build the feature
+```bash
+copilot plugin uninstall spec-pilot
 ```
 
-### Customising Instruction Files
-
-All instruction files in `.github/instructions/` can be customised:
-
-**Language-specific** (`.github/instructions/csharp.instructions.md`):
-```markdown
 ---
-description: C# coding standards
-applyTo: '**/*.cs, **/*.csproj, **/*.sln, **/*.razor, **/*.cshtml'
----
-## Guidelines
-- Target Framework: .NET 9
-- Follow Microsoft C# conventions
-- Use async/await for asynchronous programming
-```
 
-**Project-specific** (`.github/instructions/our-patterns.instructions.md`):
-```markdown
----
-description: Our project patterns
-applyTo: '**/*.cs'
----
-## Our Specific Patterns
-- Use our ILogger<T> wrapper
-- All services inherit from BaseService
-- Repository pattern for data access
+## Repository
 
-## Our Exceptions
-- We use PascalCase for JSON properties (differs from .NET defaults)
-- Reason: Frontend team consistency requirement
-```
+Source: [github.com/ahmedyoussef-au/spec-pilot](https://github.com/ahmedyoussef-au/spec-pilot)
 
-When both match a file, all matching instructions are applied together.
-
-
-### Getting Started
-
-1. **Clone or copy** the SpecPilot framework files into your repository:
-   - `.github/` — instructions, prompts, and agents
-   - `.vscode/` — MCP server configuration and VS Code settings
-   - Optionally: `AGENTS.md`, `CLAUDE.md`, `.claude/` for multi-platform support
-2. **Install prerequisites**: Ensure [Node.js](https://nodejs.org/) (with `npx`) is installed — required for MCP servers
-3. **Configure environment**: Copy `.env.example` to `.env` and fill in any required API keys
-4. **Review and customise** the existing instruction files in `.github/instructions/`
-5. **Add new instruction files** in `.github/instructions/` for your project-specific guidelines, using YAML frontmatter with `applyTo` glob patterns
-6. **Verify VS Code settings**: Ensure `.vscode/settings.json` is present with agent-related settings enabled
-7. **Start with a small feature** using `/specify` to test the workflow
-8. **Iterate and improve** your instructions, prompts, and agents based on experience
-
+License: MIT

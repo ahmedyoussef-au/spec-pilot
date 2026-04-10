@@ -2,4 +2,5 @@
   "github.copilot.chat.virtualTools.threshold": 0,
   "chat.customAgentInSubagent.enabled": true,
   "chat.useAgentSkills": true,
+  "github.copilot.chat.copilotMemory.enabled": true,
 }
