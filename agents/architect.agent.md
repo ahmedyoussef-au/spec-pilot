@@ -1,7 +1,7 @@
 ---
 name: Architect
 description: 'Lead Architect that orchestrates feature requests through research, design, audit, and documentation using subagents.'
-model: GPT-5.2 (copilot)
+model: GPT-5.4 (copilot)
 tools: [agent, web, read, search]
 agents: [Scout, Auditor, Writer]
 user-invokable: true

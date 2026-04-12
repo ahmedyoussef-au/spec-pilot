@@ -1,7 +1,7 @@
 ---
 name: Writer
 description: 'Senior Technical Writer that creates clear documentation, README updates, API specs, and tutorials from technical designs.'
-model: GPT-5.2 (copilot)
+model: Claude Sonnet 4.6 (copilot)
 tools: [read, edit, search]
 user-invokable: false
 ---

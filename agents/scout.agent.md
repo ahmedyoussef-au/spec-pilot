@@ -1,7 +1,7 @@
 ---
 name: Scout
 description: 'Context Scout that traces code flows, identifies dependencies, and maps relevant files for a given feature or change.'
-model: Claude Haiku 4.5 (copilot)
+model: GPT-5.4 mini (copilot)
 tools: [search, read, web]
 user-invokable: false 
 ---

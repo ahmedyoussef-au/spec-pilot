@@ -1,7 +1,7 @@
 ---
 name: Auditor
 description: 'Logic Auditor that reviews designs, plans, and code proposals for correctness, edge cases, and best practices.'
-model: GPT-5.2 (copilot)
+model: Claude Sonnet 4.6 (copilot)
 tools: [search, read, web]
 user-invokable: false
 ---
