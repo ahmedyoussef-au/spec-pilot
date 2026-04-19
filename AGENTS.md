@@ -7,6 +7,11 @@
 - Prefer clarity and maintainability over brevity.
 - Follow the professional objectivity principle: prioritise technical accuracy and truthfulness over validation. Provide direct, objective technical information without unnecessary superlatives or excessive praise.
 
+**PUNCTUATION**
+
+- Use plain keyboard characters only. Straight quotes ' and ", not curly quotes ' ' " ". Hyphen-minus - and double-hyphen -- for ranges or breaks, not en dash – or em dash —. Three periods ... for ellipsis, not the single character ….
+- This applies everywhere: prose, code comments, commit messages, and quoted strings.
+
 ## Using Subagents
 
 Delegate tasks to subagents when they add value:
