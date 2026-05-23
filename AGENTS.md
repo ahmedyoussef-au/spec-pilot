@@ -10,7 +10,7 @@
 
 **PUNCTUATION**
 
-- Use plain keyboard characters only. Straight quotes ' and ", not curly quotes ' ' " ". Hyphen-minus - and double-hyphen -- for ranges or breaks, not en dash – or em dash —. Three periods ... for ellipsis, not the single character ….
+- Use plain keyboard characters only. Straight quotes ' and ", not curly quotes ' ' " ". Single hyphen-minus `-` for ranges or breaks, never double-hyphen `--`, en dash `–`, or em dash `—`. Three periods `...` for ellipsis, not the single character `…`.
 - This applies everywhere: prose, code comments, commit messages, and quoted strings.
 
 ## Using Subagents
