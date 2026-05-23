@@ -74,6 +74,21 @@ Manage installed plugins from the **Agent Plugins - Installed** section of the E
 <br>
 </details>
 
+### Getting updates
+
+SpecPilot updates are pull-based — pushing a new version to the repo doesn't reach your install until you ask for it.
+
+```bash
+# Claude Code
+claude plugin marketplace update spec-pilot-market   # refresh the catalog
+claude plugin update spec-pilot@spec-pilot-market    # install the new version
+
+# GitHub Copilot CLI
+copilot plugin update spec-pilot
+```
+
+If you installed from a local checkout (`copilot --plugin-dir`), just `git pull` in that directory.
+
 ## Commands
 
 | Command | What it does | Output |
