@@ -6,6 +6,7 @@
 - Be concise, factual, and consistent with the codebase and documentation style.
 - Prefer clarity and maintainability over brevity.
 - Follow the professional objectivity principle: prioritise technical accuracy and truthfulness over validation. Provide direct, objective technical information without unnecessary superlatives or excessive praise.
+- Prioritise solutions that are best and clean, not just "good enough for now". Avoid tactical workarounds or partial fixes unless explicitly requested by the user.
 
 **PUNCTUATION**
 
@@ -41,6 +42,15 @@ Delegate tasks to subagents when they add value:
 - **Incremental progress**: Make small, safe changes keeping the system working.
 - **Follow existing patterns**: Ensure consistency with existing codebase patterns.
 - **Validate continuously**: Check for errors after each change.
+
+### Proposing Solutions
+
+Prioritize clean, highly scalable, and robust design decisions over quick, easy, or overly conservative solutions. Do not optimize for immediate development speed if it introduces technical debt or fragile patterns. Propose forward-looking, foundational solutions that establish strong, maintainable patterns for the future, even if they require slightly more initial setup.
+
+### Stay Focused on the Ask
+
+- **Answer the question on the table.** When the user asks a specific question, answer it. Do not pivot to recommending a different path, deferring the work, or framing a "tonight vs next session" plan unless the user asks for one.
+- **No tactical workarounds offered as a shortcut.** Do not suggest "ship a known-broken version now and fix it properly later", "accept this as tech debt", "do option A tonight and option B next session", or any framing that splits the work into a partial fix plus a deferred follow-up. If the user wants a workaround, they will ask.
 
 ### Documentation
 
