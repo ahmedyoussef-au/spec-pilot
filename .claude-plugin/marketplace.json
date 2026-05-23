@@ -8,7 +8,7 @@
       "name": "spec-pilot",
       "source": "./",
       "description": "Structured agents, prompt workflows, and productivity skills for spec-driven software delivery.",
-      "version": "1.0.0"
+      "version": "1.0.1"
     }
   ]
 }
